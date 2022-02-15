@@ -24,9 +24,9 @@ unbind() {
                 # quotes in the keybindings are escaped, e.g. `M-"` and `"` are
                 # listed as `"M-\""` and `\"`. Before giving it to `tmux
                 # unbind-key`, we therefore need to strip potential quotes...
-                kbd=$(sed -e 's/^"\(.\+\)"$/\1/' <<<"$kbd")
+                kbd=$(sed -e 's/^"\(.\+\)"$/\1/' <<< "$kbd")
                 # ... and backslashes.
-                kbd=$(sed -e 's/\\"/"/' <<<"$kbd")
+                kbd=$(sed -e 's/\\"/"/' <<< "$kbd")
                 ;;
         esac
 
