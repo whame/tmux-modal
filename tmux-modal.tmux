@@ -14,6 +14,22 @@ unbind() {
         local lineArr=($line)
         local kt=${lineArr[2]}
         local kbd=${lineArr[3]}
+
+        # Check if keybinding contains any quote characters ('"').
+        case "$kbd" in
+            *'"'*)
+                # Keybindings that contain characters that need to be escaped,
+                # are quoted in the output of `tmux list-keys`. For example,
+                # `M-#` and `M-$` are listed as `"M-#"` and `"M-$"`. Moreover,
+                # quotes in the keybindings are escaped, e.g. `M-"` and `"` are
+                # listed as `"M-\""` and `\"`. Before giving it to `tmux
+                # unbind-key`, we therefore need to strip potential quotes...
+                kbd=$(sed -e 's/^"\(.\+\)"$/\1/' <<<"$kbd")
+                # ... and backslashes.
+                kbd=$(sed -e 's/\\"/"/' <<<"$kbd")
+                ;;
+        esac
+
         tmux unbind-key -T $kt $kbd
     done
 }
