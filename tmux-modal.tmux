@@ -15,18 +15,30 @@ unbind() {
         local kt=${lineArr[2]}
         local kbd=${lineArr[3]}
 
-        # Check if keybinding contains any quote characters ('"').
+        # Check if keybinding contains any "special" characters.
         case "$kbd" in
-            *'"'*)
+            '"'*'"')
                 # Keybindings that contain characters that need to be escaped,
                 # are quoted in the output of `tmux list-keys`. For example,
-                # `M-#` and `M-$` are listed as `"M-#"` and `"M-$"`. Moreover,
-                # quotes in the keybindings are escaped, e.g. `M-"` and `"` are
-                # listed as `"M-\""` and `\"`. Before giving it to `tmux
-                # unbind-key`, we therefore need to strip potential quotes...
+                # `M-#` and `M-$` are listed as `"M-#"` and `"M-$"`. Before
+                # giving it to `tmux unbind-key`, we therefore need to strip the
+                # surrounding quotes.
                 kbd=$(sed -e 's/^"\(.\+\)"$/\1/' <<< "$kbd")
-                # ... and backslashes.
-                kbd=$(sed -e 's/\\"/"/' <<< "$kbd")
+                ;;&
+            *"\\"*)
+                # Some characters are escaped as well, e.g. `M-"`, `#` and `$`
+                # are listed as `"M-\""`, `\#` and `\$`, respectively.
+                # Backslashes needs to be removed before running `tmux
+                # unbind-key`.
+                kbd=$(sed -e "s/\\\\\(.\)/\1/g" <<< "$kbd")
+                ;;&
+            *";"*)
+                # Semicolons are escaped and they need to be that for `tmux
+                # unbind-key`. Above we removed all backslashes, therefore we
+                # add it here for this special character.
+                # TODO: Are there any other special characters that need to be
+                # escaped?
+                kbd=$(sed -e "s/;/\\\\;/g" <<< "$kbd")
                 ;;
         esac
 
