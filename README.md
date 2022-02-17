@@ -98,7 +98,8 @@ The following are the default keybindings of tmux-modal.
 
 | Keybinding | Description                         | tmux Command   |
 |------------|-------------------------------------|----------------|
-| `M-m`      | Enter/exit modal command mode.      | -              |
+| `M-m`      | Enter modal command mode.           | -              |
+| `M-m`      | Exit modal command mode.            | -              |
 | `y`        | Paste buffer (e.g. from copy mode). | `paste-buffer` |
 | `c`        | Enter copy-mode.                    | `copy-mode`    |
 | `q`        | Quit sticky command.                | -              |
