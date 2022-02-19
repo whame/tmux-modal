@@ -577,12 +577,20 @@ tmux source-file "$KBD_FILE"
 
 # Prepend left status bar with MODAL_ICON if our key tables are in use.
 # Determine this by checking if current key table starts with our prefix.
-CURRENT_STATUS_LEFT=$(tmux show-options -g -v status-left)
 MODAL_ICON="[=]"
-tmux set-option -g status-left \
-    '#{'`
-     `'?#{==:'$KT_PREFIX'-,'`
-        `'#{='$((${#KT_PREFIX} + 1))':client_key_table}'`
-       `'},'`
-     `$MODAL_ICON' ,'`
-    `'}'"$CURRENT_STATUS_LEFT"
+STATUS_LEFT=`
+    `'#{'`
+      `'?#{==:'$KT_PREFIX'-,'`
+         `'#{='$((${#KT_PREFIX} + 1))':client_key_table}'`
+        `'},'`
+       `$MODAL_ICON' ,'`
+     `'}'
+
+# We want to set the left status bar once; do it only if we can't find our
+# status string in current status (otherwise we would create several icons next
+# to each other, which could happen if this is run back to back multiple times
+# somehow).
+CURRENT_STATUS_LEFT=$(tmux show-options -g -v status-left)
+if ! grep -q -F "$STATUS_LEFT" <<< "$CURRENT_STATUS_LEFT"; then
+    tmux set-option -g status-left "$STATUS_LEFT""$CURRENT_STATUS_LEFT"
+fi
