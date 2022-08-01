@@ -583,7 +583,7 @@ STATUS_LEFT=`
       `'?#{==:'$KT_PREFIX'-,'`
          `'#{='$((${#KT_PREFIX} + 1))':client_key_table}'`
         `'},'`
-       `$MODAL_ICON' ,'`
+       `'#[bg=#ff0125]'$MODAL_ICON' ,'`
      `'}'
 
 # We want to set the left status bar once; do it only if we can't find our
