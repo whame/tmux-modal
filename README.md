@@ -232,3 +232,13 @@ these commands, put this in `.tmux.conf`:
 ```
 set -g @modal-yesno-cmd on
 ```
+
+### Start with modal command mode
+
+The option `@modal-on-start` can be used to automatically enter the modal
+command mode on a new tmux session. If you always want to start a new session
+with the modal command mode, add the following to `.tmux.conf`:
+
+```
+set -g @modal-on-start on
+```

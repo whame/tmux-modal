@@ -369,6 +369,17 @@ else
     KILL_WINDOW='confirm-before -p "kill-window #W? (y/n)" kill-window'
 fi
 
+# Start with modal command keytable.
+START_OPT=@modal-on-start
+START_OPT_VAL=$(tmux show-options -g -v -q $START_OPT)
+if [ -z "$START_OPT_VAL" ]; then
+    START_OPT_VAL=off
+elif [ "$START_OPT_VAL" != on ] && [ "$START_OPT_VAL" != off ]; then
+    echo Option $START_OPT: Invalid value \""$START_OPT_VAL"\"
+    echo Valid values are \"on\" or \"off\"
+    exit 22
+fi
+
 # Create keybinding file to be sourced by tmux.
 
 KBD_FILE="$CURRENT_DIR/.kbd.conf"
@@ -574,6 +585,11 @@ EOF
 
 # Load the keybindings.
 tmux source-file "$KBD_FILE"
+
+if [ "$START_OPT_VAL" == on ]; then
+    # Start with modal command keytable.
+    tmux set-option -g key-table $KT_CMD
+fi
 
 # Prepend left status bar with MODAL_ICON if our key tables are in use.
 # Determine this by checking if current key table starts with our prefix.
