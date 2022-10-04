@@ -262,6 +262,9 @@ KBD_SESS_NEXT=l
 ## KBD_GOTO_SESS_TREE).
 KBD_SESS_TREE=t
 
+## Delete session.
+KBD_SESS_DEL=D
+
 # "Go to" command prefix.
 KBD_GOTO=g
 
@@ -367,9 +370,11 @@ fi
 if [ $YESNO_OPT_VAL == off ]; then
     KILL_PANE=kill-pane
     KILL_WINDOW=kill-window
+    KILL_SESSION=kill-session
 else
     KILL_PANE='confirm-before -p "kill-pane #P? (y/n)" kill-pane'
     KILL_WINDOW='confirm-before -p "kill-window #W? (y/n)" kill-window'
+    KILL_SESSION='confirm-before -p "kill-session #S? (y/n)" kill-session'
 fi
 
 # Start with modal command keytable.
@@ -544,6 +549,7 @@ bind-key -T $KT_SESS $KBD_SESS_DETACH detach-client
 bind-key -T $KT_SESS $KBD_SESS_PREV switch-client -p
 bind-key -T $KT_SESS $KBD_SESS_NEXT switch-client -n
 bind-key -T $KT_SESS $KBD_SESS_TREE choose-tree -Zs
+bind-key -T $KT_SESS $KBD_SESS_DEL $KILL_SESSION
 EOF
 
 # goto.
