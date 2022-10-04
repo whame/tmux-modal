@@ -99,6 +99,9 @@ KBD_COPY_MODE=c
 # Paste buffer (e.g. from copy mode).
 KBD_PASTE=y
 
+# Open the tmux command prompt.
+KBD_CMD_PROMPT=:
+
 # Window command prefix.
 KBD_WIN=w
 
@@ -399,6 +402,8 @@ bind-key -T $KT_CMD $KBD_CMD_EXIT set-option key-table root
 bind-key -T $KT_CMD $KBD_COPY_MODE copy-mode
 
 bind-key -T $KT_CMD $KBD_PASTE paste-buffer
+
+bind-key -T $KT_CMD $KBD_CMD_PROMPT command-prompt
 EOF
 
 # window.
