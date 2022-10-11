@@ -53,6 +53,14 @@ unbind() {
     done
 }
 
+parse_yn_opt() {
+    if [ "$1" != on ] && [ "$1" != off ]; then
+        echo Option "\"$2\"": Invalid value \""$1"\"
+        echo Valid values are \"on\" or \"off\"
+        return 22
+    fi
+}
+
 # The "START/END KEYBINDINGS" comment lines are parsed by the Makefile to
 # auto-generate the default user configuration file.
 
@@ -368,9 +376,7 @@ YESNO_OPT=@modal-yesno-cmd
 YESNO_OPT_VAL=$(tmux show-options -g -v -q $YESNO_OPT)
 if [ -z "$YESNO_OPT_VAL" ]; then
     YESNO_OPT_VAL=off
-elif [ "$YESNO_OPT_VAL" != on ] && [ "$YESNO_OPT_VAL" != off ]; then
-    echo Option $YESNO_OPT: Invalid value \""$YESNO_OPT_VAL"\"
-    echo Valid values are \"on\" or \"off\"
+elif ! parse_yn_opt "$YESNO_OPT_VAL" $YESNO_OPT ; then
     exit 22
 fi
 
@@ -389,9 +395,7 @@ START_OPT=@modal-on-start
 START_OPT_VAL=$(tmux show-options -g -v -q $START_OPT)
 if [ -z "$START_OPT_VAL" ]; then
     START_OPT_VAL=off
-elif [ "$START_OPT_VAL" != on ] && [ "$START_OPT_VAL" != off ]; then
-    echo Option $START_OPT: Invalid value \""$START_OPT_VAL"\"
-    echo Valid values are \"on\" or \"off\"
+elif ! parse_yn_opt "$START_OPT_VAL" $START_OPT; then
     exit 22
 fi
 
