@@ -4,6 +4,13 @@
 
 set -euo pipefail
 
+# Check Bash version. We use features introduced in Bash 4.0.
+if [ ${BASH_VERSINFO[0]} -lt 4 ]; then
+    echo "ERROR: Bash version is too old." \
+         "Please upgrade to version 4.0 or newer"
+    exit 95
+fi
+
 unbind() {
     readarray -t BINDINGS <<< $(tmux list-keys | grep -E "$1" || true)
     for line in "${BINDINGS[@]}"; do
