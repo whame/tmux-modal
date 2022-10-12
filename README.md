@@ -148,7 +148,9 @@ The following are the default keybindings of tmux-modal.
 Note that the sticky window command (`w w`) allows one to execute all of the
 above commands in the table but without the initial `w`. For example, after
 hitting `w w`, `s l` splits the window pane to the right, `d` deletes the window
-pane and so on (`q` exits the sticky command).
+pane, `h` selects the left pane and so on (`q` exits the sticky command). Also
+see the option [`@modal-always-sticky`](#always-sticky-command) if you instead
+always want to use the sticky command version (with only hitting `w` once).
 
 #### Resize
 
@@ -244,3 +246,19 @@ with the modal command mode, add the following to `.tmux.conf`:
 ```
 set -g @modal-on-start on
 ```
+
+### Always sticky command
+
+The option `@modal-always-sticky` can be specified to always use the sticky
+version instead of manually entering the sticky command first (e.g. `w w` for
+sticky window command):
+
+```
+set -g @modal-always-sticky on
+```
+
+For example, with this in `.tmux.conf`, one only has to press `w` once and the
+sticky window command mode will be entered directly. That is, after hitting `w`
+once, you can now directly use `h`, `j`, `k` and `l` to select the window panes
+(or any other window commands). Don't forget to exit the sticky command with
+`q`.

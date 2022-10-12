@@ -399,6 +399,15 @@ elif ! parse_yn_opt "$START_OPT_VAL" $START_OPT; then
     exit 22
 fi
 
+# Always sticky commands.
+ALWAYS_STICKY_OPT=@modal-always-sticky
+ALWAYS_STICKY_VAL=$(tmux show-options -g -v -q $ALWAYS_STICKY_OPT)
+if [ -z "$ALWAYS_STICKY_VAL" ]; then
+    ALWAYS_STICKY_VAL=off
+elif ! parse_yn_opt "$ALWAYS_STICKY_VAL" $ALWAYS_STICKY_OPT; then
+    exit 22
+fi
+
 # Create keybinding file to be sourced by tmux.
 
 KBD_FILE="$CURRENT_DIR/.kbd.conf"
@@ -429,9 +438,17 @@ KT_WIN_SPLIT=$KT_PREFIX-window-split
 KT_WIN_MOVE=$KT_PREFIX-window-move
 KT_WIN_ARRANGE=$KT_PREFIX-window-arrange
 KT_WIN_RESIZE=$KT_PREFIX-window-resize
+
+BIND_KEY_KBD_WIN="bind-key -T $KT_CMD $KBD_WIN switch-client -T $KT_WIN"
+if [ "$ALWAYS_STICKY_VAL" == on ]; then
+    # Enter sticky window-pane directly.
+    BIND_KEY_KBD_WIN="bind-key -T $KT_CMD $KBD_WIN"
+    BIND_KEY_KBD_WIN+=" set-option key-table $KT_WIN_PANE"
+fi
+
 cat << EOF >> "$KBD_FILE"
 
-bind-key -T $KT_CMD $KBD_WIN switch-client -T $KT_WIN
+$BIND_KEY_KBD_WIN
 
 bind-key -T $KT_WIN $KBD_WIN_GOTO_0 select-window -t :0
 bind-key -T $KT_WIN $KBD_WIN_GOTO_1 select-window -t :1
@@ -506,6 +523,7 @@ bind-key -T $KT_WIN_PANE $KBD_WIN_RENAME \
 bind-key -T $KT_WIN_PANE $KBD_WIN_SPLIT switch-client -T $KT_WIN_SPLIT
 bind-key -T $KT_WIN_PANE $KBD_WIN_MOVE switch-client -T $KT_WIN_MOVE
 bind-key -T $KT_WIN_PANE $KBD_WIN_ARRANGE switch-client -T $KT_WIN_ARRANGE
+bind-key -T $KT_WIN_PANE $KBD_WIN_RESIZE set-option key-table $KT_WIN_RESIZE
 
 bind-key -T $KT_WIN_PANE $KBD_QUIT set-option key-table $KT_CMD
 bind-key -T $KT_WIN_PANE $KBD_CMD_EXIT set-option key-table root
