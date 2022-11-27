@@ -408,6 +408,15 @@ elif ! parse_yn_opt "$ALWAYS_STICKY_VAL" $ALWAYS_STICKY_OPT; then
     exit 22
 fi
 
+# Show command keys (key tables) in status bar.
+SHOW_CMD_KEYS_OPT=@modal-show-cmd-keys
+SHOW_CMD_KEYS_VAL=$(tmux show-options -g -v -q $SHOW_CMD_KEYS_OPT)
+if [ -z "$SHOW_CMD_KEYS_VAL" ]; then
+    SHOW_CMD_KEYS_VAL=off
+elif ! parse_yn_opt "$SHOW_CMD_KEYS_VAL" $SHOW_CMD_KEYS_OPT; then
+    exit 22
+fi
+
 # Create keybinding file to be sourced by tmux.
 
 KBD_FILE="$CURRENT_DIR/.kbd.conf"
@@ -631,16 +640,93 @@ if [ "$START_OPT_VAL" == on ]; then
     tmux set-option -g key-table $KT_CMD
 fi
 
-# Prepend left status bar with MODAL_ICON if our key tables are in use.
+# Prepend left status bar with KT_CMD_ICON if our key tables are in use.
 # Determine this by checking if current key table starts with our prefix.
-MODAL_ICON="[=]"
+KT_CMD_ICON="[=]"
 STATUS_LEFT=`
+`'#{'`
+  `'?#{==:'$KT_PREFIX'-,'`
+     `'#{='$((${#KT_PREFIX} + 1))':client_key_table}'`
+    `'},'`
+   `$KT_CMD_ICON' ,'`
+`'}'
+
+if [ "$SHOW_CMD_KEYS_VAL" == on ]; then
+    # Check which key table is in use and use corresponding "icon" in the left
+    # status bar. The icons are derived from the keybindings.
+    KT_WIN_ICON="[$KBD_WIN]"
+    KT_WIN_PANE_ICON="[$KBD_WIN$KBD_WIN_PANE]"
+    KT_WIN_SPLIT_ICON="[$KBD_WIN$KBD_WIN_SPLIT]"
+    KT_WIN_MOVE_ICON="[$KBD_WIN$KBD_WIN_MOVE]"
+    KT_WIN_ARRANGE_ICON="[$KBD_WIN$KBD_WIN_ARRANGE]"
+    KT_WIN_RESIZE_ICON="[$KBD_WIN$KBD_WIN_RESIZE]"
+
+    KT_SESS_ICON="[$KBD_SESS]"
+
+    KT_GOTO_ICON="[$KBD_GOTO]"
+    KT_GOTO_WIN_ICON="[$KBD_GOTO$KBD_GOTO_WIN]"
+    KT_GOTO_SESS_ICON="[$KBD_GOTO$KBD_GOTO_SESS]"
+
+    # Seems to be the only way to to do if-elseif-...-else in tmux format
+    # syntax...
+    STATUS_LEFT=`
     `'#{'`
-      `'?#{==:'$KT_PREFIX'-,'`
-         `'#{='$((${#KT_PREFIX} + 1))':client_key_table}'`
+      `'?#{==:'$KT_CMD','`
+         `'#{client_key_table}'`
         `'},'`
-       `$MODAL_ICON' ,'`
-     `'}'
+       `$KT_CMD_ICON' ,'`
+    `'#{'`
+      `'?#{==:'$KT_WIN','`
+         `'#{client_key_table}'`
+        `'},'`
+       `$KT_WIN_ICON' ,'`
+    `'#{'`
+      `'?#{==:'$KT_WIN_PANE','`
+         `'#{client_key_table}'`
+        `'},'`
+       `$KT_WIN_PANE_ICON' ,'`
+    `'#{'`
+     `'?#{==:'$KT_WIN_SPLIT','`
+         `'#{client_key_table}'`
+        `'},'`
+       `$KT_WIN_SPLIT_ICON' ,'`
+    `'#{'`
+     `'?#{==:'$KT_WIN_MOVE','`
+         `'#{client_key_table}'`
+        `'},'`
+       `$KT_WIN_MOVE_ICON' ,'`
+    `'#{'`
+     `'?#{==:'$KT_WIN_ARRANGE','`
+         `'#{client_key_table}'`
+        `'},'`
+       `$KT_WIN_ARRANGE_ICON' ,'`
+    `'#{'`
+     `'?#{==:'$KT_WIN_RESIZE','`
+         `'#{client_key_table}'`
+        `'},'`
+       `$KT_WIN_RESIZE_ICON' ,'`
+    `'#{'`
+     `'?#{==:'$KT_SESS','`
+         `'#{client_key_table}'`
+        `'},'`
+       `$KT_SESS_ICON' ,'`
+    `'#{'`
+     `'?#{==:'$KT_GOTO','`
+         `'#{client_key_table}'`
+        `'},'`
+       `$KT_GOTO_ICON' ,'`
+    `'#{'`
+     `'?#{==:'$KT_GOTO_WIN','`
+         `'#{client_key_table}'`
+        `'},'`
+       `$KT_GOTO_WIN_ICON' ,'`
+    `'#{'`
+     `'?#{==:'$KT_GOTO_SESS','`
+         `'#{client_key_table}'`
+        `'},'`
+       `$KT_GOTO_SESS_ICON' ,'`
+    `'}}}}}}}}}}}'
+fi
 
 # We want to set the left status bar once; do it only if we can't find our
 # status string in current status (otherwise we would create several icons next

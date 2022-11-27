@@ -262,3 +262,17 @@ sticky window command mode will be entered directly. That is, after hitting `w`
 once, you can now directly use `h`, `j`, `k` and `l` to select the window panes
 (or any other window commands). Don't forget to exit the sticky command with
 `q`.
+
+### Show command keys in status bar
+
+The option `@modal-show-cmd-keys` can be set in `.tmux.conf` to give immediate
+feedback in the status bar during tmux-modal command sequences:
+
+```
+set -g @modal-show-cmd-keys on
+```
+
+The left status bar will now update to match the tmux-modal command currently in
+use. For example, if you press `w` the status bar will change from the modal
+command icon `[=]` to `[w]` (the window command). If you now further press `s`,
+it will update to `[ws]` to signify the split window command sequence and so on.
