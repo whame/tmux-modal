@@ -276,3 +276,14 @@ The left status bar will now update to match the tmux-modal command currently in
 use. For example, if you press `w` the status bar will change from the modal
 command icon `[=]` to `[w]` (the window command). If you now further press `s`,
 it will update to `[ws]` to signify the split window command sequence and so on.
+
+### Add Options to Split Command
+
+The option `@modal-split-opts` can be set in `.tmux.conf` to give allow control
+over options passed to split:
+
+```
+# use the current pane path as working directory for new splits
+set -g @modal-split-opts "-c \"#{pane_current_path}\""
+```
+

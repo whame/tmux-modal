@@ -417,6 +417,13 @@ elif ! parse_yn_opt "$SHOW_CMD_KEYS_VAL" $SHOW_CMD_KEYS_OPT; then
     exit 22
 fi
 
+# allow override of split options
+SPLIT_OPT=@modal-split-opts
+SPLIT_VAL=$(tmux show-options -g -v -q $SPLIT_OPT)
+if [ -z "$SPLIT_VAL" ]; then
+    SPLIT_VAL=""
+fi
+
 # Create keybinding file to be sourced by tmux.
 
 KBD_FILE="$CURRENT_DIR/.kbd.conf"
@@ -541,8 +548,8 @@ EOF
 # window-split.
 cat << EOF >> "$KBD_FILE"
 
-bind-key -T $KT_WIN_SPLIT $KBD_WIN_SPLIT_RIGHT split-window -h
-bind-key -T $KT_WIN_SPLIT $KBD_WIN_SPLIT_DOWN split-window
+bind-key -T $KT_WIN_SPLIT $KBD_WIN_SPLIT_RIGHT split-window -h $SPLIT_VAL
+bind-key -T $KT_WIN_SPLIT $KBD_WIN_SPLIT_DOWN split-window $SPLIT_VAL
 EOF
 
 # window-move.
