@@ -220,9 +220,9 @@ usual, `q` exits the sticky command).
 ### Custom keybindings
 
 The option `@modal-keybindings-conf` can be set to load custom keybindings. The
-file `keybindings.conf` shows the default keybindings and can be used as a
-template. Thus, copy the file and modify it to your liking, and finally set this
-in your `.tmux.conf` to load them:
+file [`keybindings.conf`](keybindings.conf) shows the default keybindings and
+can be used as a template. Thus, copy the file and modify it to your liking, and
+finally set this in your `.tmux.conf` to load them:
 
 ```
 set -g @modal-keybindings-conf /path/to/my-tmux-modal-keybindings.conf
@@ -231,9 +231,10 @@ set -g @modal-keybindings-conf /path/to/my-tmux-modal-keybindings.conf
 ### Custom commands
 
 The option `@modal-commands-conf` can be set to load custom commands that will
-be executed for the keybindings. The file `commands.conf` shows the default
-commands and can be used as a template. Thus, copy the file and modify it to
-your liking, and finally set this in your `.tmux.conf` to load them:
+be executed for the keybindings. The file [`commands.conf`](commands.conf) shows
+the default commands and can be used as a template. Thus, copy the file and
+modify it to your liking, and finally set this in your `.tmux.conf` to load
+them:
 
 ```
 set -g @modal-commands-conf /path/to/my-tmux-modal-commands.conf
