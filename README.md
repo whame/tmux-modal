@@ -110,43 +110,43 @@ customizable, as well as the command executed for each! See option
 
 ### Window
 
-| Keybinding | Description                                                 | tmux Command                                                   |
-|------------|-------------------------------------------------------------|----------------------------------------------------------------|
-| `w w`      | Enter sticky window command mode.                           | -                                                              |
-| `w 0`      | Go to window 0. This is an alias for `g w 0`.               | `select-window -t :0`                                          |
-| `w 1`      | Go to window 1. This is an alias for `g w 1`.               | `select-window -t :1`                                          |
-| `w 2`      | Go to window 2. This is an alias for `g w 2`.               | `select-window -t :2`                                          |
-| `w 3`      | Go to window 3. This is an alias for `g w 3`.               | `select-window -t :3`                                          |
-| `w 4`      | Go to window 4. This is an alias for `g w 4`.               | `select-window -t :4`                                          |
-| `w 5`      | Go to window 5. This is an alias for `g w 5`.               | `select-window -t :5`                                          |
-| `w 6`      | Go to window 6. This is an alias for `g w 6`.               | `select-window -t :6`                                          |
-| `w 7`      | Go to window 7. This is an alias for `g w 7`.               | `select-window -t :7`                                          |
-| `w 8`      | Go to window 8. This is an alias for `g w 8`.               | `select-window -t :8`                                          |
-| `w 9`      | Go to window 9. This is an alias for `g w 9`.               | `select-window -t :9`                                          |
-| `w t`      | Select window with tree view. This is an alias for `g w t`. | `choose-tree -Zw`                                              |
-| `w i`      | Select window with index. This is an alias for `g w i`.     | `command-prompt -p index "select-window -t ':%%'"`             |
-| `w h`      | Select left pane.                                           | `select-pane -L`                                               |
-| `w l`      | Select right pane.                                          | `select-pane -R`                                               |
-| `w k`      | Select above pane.                                          | `select-pane -U`                                               |
-| `w j`      | Select below pane.                                          | `select-pane -D`                                               |
-| `w d`      | Delete window pane.                                         | `kill-pane` (see option [`@modal-yesno-cmd`](#yesno-prompt))   |
-| `w H`      | Select previous window. This is an alias for `g w h`.       | `select-window -t :-`                                          |
-| `w L`      | Select next window. This is an alias for `g w l`.           | `select-window -t :+`                                          |
-| `w D`      | Delete window.                                              | `kill-window` (see option [`@modal-yesno-cmd`](#yesno-prompt)) |
-| `w c`      | Create new window.                                          | `new-window`                                                   |
-| `w o`      | Select other/last window.                                   | `last-window`                                                  |
-| `w z`      | Zoom pane.                                                  | `resize-pane -Z`                                               |
-| `w b`      | Break pane into a new window.                               | `break-pane`                                                   |
-| `w n`      | Display pane numbers.                                       | `display-panes`                                                |
-| `w ,`      | Rename window.                                              | `command-prompt -I "#W" "rename-window -- '%%'"`               |
-| `w s l`    | Split window pane right.                                    | `split-window -h`                                              |
-| `w s j`    | Split window pane down.                                     | `split-window`                                                 |
-| `w m k`    | Move window pane up.                                        | `swap-pane -U`                                                 |
-| `w m j`    | Move window pane down.                                      | `swap-pane -D`                                                 |
-| `w a 1`    | Arrange window to layout 1.                                 | `select-layout even-horizontal`                                |
-| `w a 2`    | Arrange window to layout 2.                                 | `select-layout even-vertical`                                  |
-| `w a 3`    | Arrange window to layout 3.                                 | `select-layout main-horizontal`                                |
-| `w a 4`    | Arrange window to layout 4.                                 | `select-layout main-vertical`                                  |
+| Keybinding | Description                                                 | tmux Command                                       |
+|------------|-------------------------------------------------------------|----------------------------------------------------|
+| `w w`      | Enter sticky window command mode.                           | -                                                  |
+| `w 0`      | Go to window 0. This is an alias for `g w 0`.               | `select-window -t :0`                              |
+| `w 1`      | Go to window 1. This is an alias for `g w 1`.               | `select-window -t :1`                              |
+| `w 2`      | Go to window 2. This is an alias for `g w 2`.               | `select-window -t :2`                              |
+| `w 3`      | Go to window 3. This is an alias for `g w 3`.               | `select-window -t :3`                              |
+| `w 4`      | Go to window 4. This is an alias for `g w 4`.               | `select-window -t :4`                              |
+| `w 5`      | Go to window 5. This is an alias for `g w 5`.               | `select-window -t :5`                              |
+| `w 6`      | Go to window 6. This is an alias for `g w 6`.               | `select-window -t :6`                              |
+| `w 7`      | Go to window 7. This is an alias for `g w 7`.               | `select-window -t :7`                              |
+| `w 8`      | Go to window 8. This is an alias for `g w 8`.               | `select-window -t :8`                              |
+| `w 9`      | Go to window 9. This is an alias for `g w 9`.               | `select-window -t :9`                              |
+| `w t`      | Select window with tree view. This is an alias for `g w t`. | `choose-tree -Zw`                                  |
+| `w i`      | Select window with index. This is an alias for `g w i`.     | `command-prompt -p index "select-window -t ':%%'"` |
+| `w h`      | Select left pane.                                           | `select-pane -L`                                   |
+| `w l`      | Select right pane.                                          | `select-pane -R`                                   |
+| `w k`      | Select above pane.                                          | `select-pane -U`                                   |
+| `w j`      | Select below pane.                                          | `select-pane -D`                                   |
+| `w d`      | Delete window pane.                                         | `kill-pane`                                        |
+| `w H`      | Select previous window. This is an alias for `g w h`.       | `select-window -t :-`                              |
+| `w L`      | Select next window. This is an alias for `g w l`.           | `select-window -t :+`                              |
+| `w D`      | Delete window.                                              | `kill-window`                                      |
+| `w c`      | Create new window.                                          | `new-window`                                       |
+| `w o`      | Select other/last window.                                   | `last-window`                                      |
+| `w z`      | Zoom pane.                                                  | `resize-pane -Z`                                   |
+| `w b`      | Break pane into a new window.                               | `break-pane`                                       |
+| `w n`      | Display pane numbers.                                       | `display-panes`                                    |
+| `w ,`      | Rename window.                                              | `command-prompt -I "#W" "rename-window -- '%%'"`   |
+| `w s l`    | Split window pane right.                                    | `split-window -h`                                  |
+| `w s j`    | Split window pane down.                                     | `split-window`                                     |
+| `w m k`    | Move window pane up.                                        | `swap-pane -U`                                     |
+| `w m j`    | Move window pane down.                                      | `swap-pane -D`                                     |
+| `w a 1`    | Arrange window to layout 1.                                 | `select-layout even-horizontal`                    |
+| `w a 2`    | Arrange window to layout 2.                                 | `select-layout even-vertical`                      |
+| `w a 3`    | Arrange window to layout 3.                                 | `select-layout main-horizontal`                    |
+| `w a 4`    | Arrange window to layout 4.                                 | `select-layout main-vertical`                      |
 
 Note that the sticky window command (`w w`) allows one to execute all of the
 above commands in the table but without the initial `w`. For example, after
@@ -177,13 +177,13 @@ usual, `q` exits the sticky command).
 
 ### Session
 
-| Keybinding | Description                                                  | tmux Command                                                    |
-|------------|--------------------------------------------------------------|-----------------------------------------------------------------|
-| `s d`      | Detach session.                                              | `detach-client`                                                 |
-| `s h`      | Select previous session. This is an alias for `g s h`.       | `switch-client -p`                                              |
-| `s l`      | Select next session. This is an alias for `g s l`.           | `switch-client -n`                                              |
-| `s t`      | Select session with tree view. This is an alias for `g s t`. | `choose-tree -Zs`                                               |
-| `s D`      | Delete session.                                              | `kill-session` (see option [`@modal-yesno-cmd`](#yesno-prompt)) |
+| Keybinding | Description                                                  | tmux Command       |
+|------------|--------------------------------------------------------------|--------------------|
+| `s d`      | Detach session.                                              | `detach-client`    |
+| `s h`      | Select previous session. This is an alias for `g s h`.       | `switch-client -p` |
+| `s l`      | Select next session. This is an alias for `g s l`.           | `switch-client -n` |
+| `s t`      | Select session with tree view. This is an alias for `g s t`. | `choose-tree -Zs`  |
+| `s D`      | Delete session.                                              | `kill-session`     |
 
 ### Go to
 
@@ -239,18 +239,6 @@ your liking, and finally set this in your `.tmux.conf` to load them:
 set -g @modal-commands-conf /path/to/my-tmux-modal-commands.conf
 ```
 
-### Yes/no prompt
-
-Some commands might be too "dangerous" to execute directly, for example `w d`
-(`kill-pane`) or `w D` (`kill-window`). The option `@modal-yesno-cmd` can
-therefore be used to ask for confirmation before executing the commands (to
-mimic the default tmux behavior). If you want a yes/no prompt before executing
-these commands, put this in `.tmux.conf`:
-
-```
-set -g @modal-yesno-cmd on
-```
-
 ### Start with modal command mode
 
 The option `@modal-on-start` can be used to automatically enter the modal
@@ -290,3 +278,57 @@ The left status bar will now update to match the tmux-modal command currently in
 use. For example, if you press `w` the status bar will change from the modal
 command icon `[=]` to `[w]` (the window command). If you now further press `s`,
 it will update to `[ws]` to signify the split window command sequence and so on.
+
+### Yes/no prompt
+
+**DEPRECATED**
+
+This option is deprecated due to option
+[`@modal-commands-conf`](#custom-commands) and will be removed soon. To keep the
+old behavior, use option [`@modal-commands-conf`](#custom-commands) instead. For
+example:
+
+```
+diff --git a/commands.conf b/commands.conf
+index 1859fcb..ec4f65e 100644
+--- a/commands.conf
++++ b/commands.conf
+@@ -82,7 +82,7 @@ CMD_WIN_PANE_UP='select-pane -U'
+ CMD_WIN_PANE_DOWN='select-pane -D'
+
+ ## Delete window pane.
+-CMD_WIN_PANE_DEL='kill-pane'
++CMD_WIN_PANE_DEL='confirm-before -p "kill-pane #P? (y/n)" kill-pane'
+
+ ## Select previous window (window command alias for CMD_GOTO_WIN_PREV).
+ CMD_WIN_PREV='select-window -t :-'
+@@ -91,7 +91,7 @@ CMD_WIN_PREV='select-window -t :-'
+ CMD_WIN_NEXT='select-window -t :+'
+
+ ## Delete window.
+-CMD_WIN_DEL='kill-window'
++CMD_WIN_DEL='confirm-before -p "kill-window #W? (y/n)" kill-window'
+
+ ## Create new window.
+ CMD_WIN_CREATE='new-window'
+@@ -183,7 +183,7 @@ CMD_SESS_NEXT='switch-client -n'
+ CMD_SESS_TREE='choose-tree -Zs'
+
+ ## Delete session.
+-CMD_SESS_DEL='kill-session'
++CMD_SESS_DEL='confirm-before -p "kill-session #S? (y/n)" kill-session'
+
+ # "Go to" command prefix.
+```
+
+---
+
+_Some commands might be too "dangerous" to execute directly, for example `w d`
+(`kill-pane`) or `w D` (`kill-window`). The option `@modal-yesno-cmd` can
+therefore be used to ask for confirmation before executing the commands (to
+mimic the default tmux behavior). If you want a yes/no prompt before executing
+these commands, put this in `.tmux.conf`:_
+
+```
+set -g @modal-yesno-cmd on
+```
