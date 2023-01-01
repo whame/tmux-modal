@@ -75,18 +75,32 @@ unbind "^bind-key +-T +root +.+ +set-option key-table $KT_CMD"
 # Source custom (overriding) keybinding file.
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-CONF_OPT=@modal-keybindings-conf
-KBD_CONF_FILE=$(tmux show-options -g -v -q $CONF_OPT)
+KBD_CONF_OPT=@modal-keybindings-conf
+KBD_CONF_FILE=$(tmux show-options -g -v -q $KBD_CONF_OPT)
 if [ -z "$KBD_CONF_FILE" ]; then
     KBD_CONF_FILE="$CURRENT_DIR/keybindings.conf"
 fi
 
 if [ ! -f "$KBD_CONF_FILE" ]; then
-    echo Option $CONF_OPT: File \""$KBD_CONF_FILE"\" not found
+    echo Option $KBD_CONF_OPT: File \""$KBD_CONF_FILE"\" not found
     exit 2
 fi
 
 source "$KBD_CONF_FILE"
+
+# Source custom (overriding) command file.
+CMD_CONF_OPT=@modal-commands-conf
+CMD_CONF_FILE=$(tmux show-options -g -v -q $CMD_CONF_OPT)
+if [ -z "$CMD_CONF_FILE" ]; then
+    CMD_CONF_FILE="$CURRENT_DIR/commands.conf"
+fi
+
+if [ ! -f "$CMD_CONF_FILE" ]; then
+    echo Option $CMD_CONF_OPT: File \""$CMD_CONF_FILE"\" not found
+    exit 2
+fi
+
+source "$CMD_CONF_FILE"
 
 # Check usage of y/n-commands.
 YESNO_OPT=@modal-yesno-cmd
@@ -97,14 +111,10 @@ elif ! parse_yn_opt "$YESNO_OPT_VAL" $YESNO_OPT ; then
     exit 22
 fi
 
-if [ $YESNO_OPT_VAL == off ]; then
-    KILL_PANE=kill-pane
-    KILL_WINDOW=kill-window
-    KILL_SESSION=kill-session
-else
-    KILL_PANE='confirm-before -p "kill-pane #P? (y/n)" kill-pane'
-    KILL_WINDOW='confirm-before -p "kill-window #W? (y/n)" kill-window'
-    KILL_SESSION='confirm-before -p "kill-session #S? (y/n)" kill-session'
+if [ $YESNO_OPT_VAL == on ]; then
+    CMD_WIN_PANE_DEL='confirm-before -p "kill-pane #P? (y/n)" kill-pane'
+    CMD_WIN_DEL='confirm-before -p "kill-window #W? (y/n)" kill-window'
+    CMD_SESS_DEL='confirm-before -p "kill-session #S? (y/n)" kill-session'
 fi
 
 # Start with modal command keytable.
@@ -150,11 +160,11 @@ cat << EOF >> "$KBD_FILE"
 bind-key -T root $KBD_CMD set-option key-table $KT_CMD
 bind-key -T $KT_CMD $KBD_CMD_EXIT set-option key-table root
 
-bind-key -T $KT_CMD $KBD_COPY_MODE copy-mode
+bind-key -T $KT_CMD $KBD_COPY_MODE $CMD_COPY_MODE
 
-bind-key -T $KT_CMD $KBD_PASTE paste-buffer
+bind-key -T $KT_CMD $KBD_PASTE $CMD_PASTE
 
-bind-key -T $KT_CMD $KBD_CMD_PROMPT command-prompt
+bind-key -T $KT_CMD $KBD_CMD_PROMPT $CMD_CMD_PROMPT
 EOF
 
 # window.
@@ -176,35 +186,33 @@ cat << EOF >> "$KBD_FILE"
 
 $BIND_KEY_KBD_WIN
 
-bind-key -T $KT_WIN $KBD_WIN_GOTO_0 select-window -t :0
-bind-key -T $KT_WIN $KBD_WIN_GOTO_1 select-window -t :1
-bind-key -T $KT_WIN $KBD_WIN_GOTO_2 select-window -t :2
-bind-key -T $KT_WIN $KBD_WIN_GOTO_3 select-window -t :3
-bind-key -T $KT_WIN $KBD_WIN_GOTO_4 select-window -t :4
-bind-key -T $KT_WIN $KBD_WIN_GOTO_5 select-window -t :5
-bind-key -T $KT_WIN $KBD_WIN_GOTO_6 select-window -t :6
-bind-key -T $KT_WIN $KBD_WIN_GOTO_7 select-window -t :7
-bind-key -T $KT_WIN $KBD_WIN_GOTO_8 select-window -t :8
-bind-key -T $KT_WIN $KBD_WIN_GOTO_9 select-window -t :9
-bind-key -T $KT_WIN $KBD_WIN_GOTO_TREE choose-tree -Zw
-bind-key -T $KT_WIN $KBD_WIN_GOTO_INDEX \
-    command-prompt -p index "select-window -t ':%%'"
+bind-key -T $KT_WIN $KBD_WIN_GOTO_0 $CMD_WIN_GOTO_0
+bind-key -T $KT_WIN $KBD_WIN_GOTO_1 $CMD_WIN_GOTO_1
+bind-key -T $KT_WIN $KBD_WIN_GOTO_2 $CMD_WIN_GOTO_2
+bind-key -T $KT_WIN $KBD_WIN_GOTO_3 $CMD_WIN_GOTO_3
+bind-key -T $KT_WIN $KBD_WIN_GOTO_4 $CMD_WIN_GOTO_4
+bind-key -T $KT_WIN $KBD_WIN_GOTO_5 $CMD_WIN_GOTO_5
+bind-key -T $KT_WIN $KBD_WIN_GOTO_6 $CMD_WIN_GOTO_6
+bind-key -T $KT_WIN $KBD_WIN_GOTO_7 $CMD_WIN_GOTO_7
+bind-key -T $KT_WIN $KBD_WIN_GOTO_8 $CMD_WIN_GOTO_8
+bind-key -T $KT_WIN $KBD_WIN_GOTO_9 $CMD_WIN_GOTO_9
+bind-key -T $KT_WIN $KBD_WIN_GOTO_TREE $CMD_WIN_GOTO_TREE
+bind-key -T $KT_WIN $KBD_WIN_GOTO_INDEX $CMD_WIN_GOTO_INDEX
 
-bind-key -T $KT_WIN $KBD_WIN_PANE_LEFT select-pane -L
-bind-key -T $KT_WIN $KBD_WIN_PANE_RIGHT select-pane -R
-bind-key -T $KT_WIN $KBD_WIN_PANE_UP select-pane -U
-bind-key -T $KT_WIN $KBD_WIN_PANE_DOWN select-pane -D
-bind-key -T $KT_WIN $KBD_WIN_PANE_DEL $KILL_PANE
-bind-key -T $KT_WIN $KBD_WIN_PREV select-window -t :-
-bind-key -T $KT_WIN $KBD_WIN_NEXT select-window -t :+
-bind-key -T $KT_WIN $KBD_WIN_DEL $KILL_WINDOW
-bind-key -T $KT_WIN $KBD_WIN_CREATE new-window
-bind-key -T $KT_WIN $KBD_WIN_LAST last-window
-bind-key -T $KT_WIN $KBD_WIN_ZOOM resize-pane -Z
-bind-key -T $KT_WIN $KBD_WIN_BREAK break-pane
-bind-key -T $KT_WIN $KBD_WIN_NR display-panes
-bind-key -T $KT_WIN $KBD_WIN_RENAME \
-    command-prompt -I "#W" "rename-window -- '%%'"
+bind-key -T $KT_WIN $KBD_WIN_PANE_LEFT $CMD_WIN_PANE_LEFT
+bind-key -T $KT_WIN $KBD_WIN_PANE_RIGHT $CMD_WIN_PANE_RIGHT
+bind-key -T $KT_WIN $KBD_WIN_PANE_UP $CMD_WIN_PANE_UP
+bind-key -T $KT_WIN $KBD_WIN_PANE_DOWN $CMD_WIN_PANE_DOWN
+bind-key -T $KT_WIN $KBD_WIN_PANE_DEL $CMD_WIN_PANE_DEL
+bind-key -T $KT_WIN $KBD_WIN_PREV $CMD_WIN_PREV
+bind-key -T $KT_WIN $KBD_WIN_NEXT $CMD_WIN_NEXT
+bind-key -T $KT_WIN $KBD_WIN_DEL $CMD_WIN_DEL
+bind-key -T $KT_WIN $KBD_WIN_CREATE $CMD_WIN_CREATE
+bind-key -T $KT_WIN $KBD_WIN_LAST $CMD_WIN_LAST
+bind-key -T $KT_WIN $KBD_WIN_ZOOM $CMD_WIN_ZOOM
+bind-key -T $KT_WIN $KBD_WIN_BREAK $CMD_WIN_BREAK
+bind-key -T $KT_WIN $KBD_WIN_NR $CMD_WIN_NR
+bind-key -T $KT_WIN $KBD_WIN_RENAME $CMD_WIN_RENAME
 
 bind-key -T $KT_WIN $KBD_WIN_PANE set-option key-table $KT_WIN_PANE
 bind-key -T $KT_WIN $KBD_WIN_SPLIT switch-client -T $KT_WIN_SPLIT
@@ -216,35 +224,33 @@ EOF
 # window-pane.
 cat << EOF >> "$KBD_FILE"
 
-bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_0 select-window -t :0
-bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_1 select-window -t :1
-bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_2 select-window -t :2
-bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_3 select-window -t :3
-bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_4 select-window -t :4
-bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_5 select-window -t :5
-bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_6 select-window -t :6
-bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_7 select-window -t :7
-bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_8 select-window -t :8
-bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_9 select-window -t :9
-bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_TREE choose-tree -Zw
-bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_INDEX \
-    command-prompt -p index "select-window -t ':%%'"
+bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_0 $CMD_WIN_GOTO_0
+bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_1 $CMD_WIN_GOTO_1
+bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_2 $CMD_WIN_GOTO_2
+bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_3 $CMD_WIN_GOTO_3
+bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_4 $CMD_WIN_GOTO_4
+bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_5 $CMD_WIN_GOTO_5
+bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_6 $CMD_WIN_GOTO_6
+bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_7 $CMD_WIN_GOTO_7
+bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_8 $CMD_WIN_GOTO_8
+bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_9 $CMD_WIN_GOTO_9
+bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_TREE $CMD_WIN_GOTO_TREE
+bind-key -T $KT_WIN_PANE $KBD_WIN_GOTO_INDEX $CMD_WIN_GOTO_INDEX
 
-bind-key -T $KT_WIN_PANE $KBD_WIN_PANE_LEFT select-pane -L
-bind-key -T $KT_WIN_PANE $KBD_WIN_PANE_RIGHT select-pane -R
-bind-key -T $KT_WIN_PANE $KBD_WIN_PANE_UP select-pane -U
-bind-key -T $KT_WIN_PANE $KBD_WIN_PANE_DOWN select-pane -D
-bind-key -T $KT_WIN_PANE $KBD_WIN_PANE_DEL $KILL_PANE
-bind-key -T $KT_WIN_PANE $KBD_WIN_PREV select-window -t :-
-bind-key -T $KT_WIN_PANE $KBD_WIN_NEXT select-window -t :+
-bind-key -T $KT_WIN_PANE $KBD_WIN_DEL $KILL_WINDOW
-bind-key -T $KT_WIN_PANE $KBD_WIN_CREATE new-window
-bind-key -T $KT_WIN_PANE $KBD_WIN_LAST last-window
-bind-key -T $KT_WIN_PANE $KBD_WIN_ZOOM resize-pane -Z
-bind-key -T $KT_WIN_PANE $KBD_WIN_BREAK break-pane
-bind-key -T $KT_WIN_PANE $KBD_WIN_NR display-panes
-bind-key -T $KT_WIN_PANE $KBD_WIN_RENAME \
-    command-prompt -I "#W" "rename-window -- '%%'"
+bind-key -T $KT_WIN_PANE $KBD_WIN_PANE_LEFT $CMD_WIN_PANE_LEFT
+bind-key -T $KT_WIN_PANE $KBD_WIN_PANE_RIGHT $CMD_WIN_PANE_RIGHT
+bind-key -T $KT_WIN_PANE $KBD_WIN_PANE_UP $CMD_WIN_PANE_UP
+bind-key -T $KT_WIN_PANE $KBD_WIN_PANE_DOWN $CMD_WIN_PANE_DOWN
+bind-key -T $KT_WIN_PANE $KBD_WIN_PANE_DEL $CMD_WIN_PANE_DEL
+bind-key -T $KT_WIN_PANE $KBD_WIN_PREV $CMD_WIN_PREV
+bind-key -T $KT_WIN_PANE $KBD_WIN_NEXT $CMD_WIN_NEXT
+bind-key -T $KT_WIN_PANE $KBD_WIN_DEL $CMD_WIN_DEL
+bind-key -T $KT_WIN_PANE $KBD_WIN_CREATE $CMD_WIN_CREATE
+bind-key -T $KT_WIN_PANE $KBD_WIN_LAST $CMD_WIN_LAST
+bind-key -T $KT_WIN_PANE $KBD_WIN_ZOOM $CMD_WIN_ZOOM
+bind-key -T $KT_WIN_PANE $KBD_WIN_BREAK $CMD_WIN_BREAK
+bind-key -T $KT_WIN_PANE $KBD_WIN_NR $CMD_WIN_NR
+bind-key -T $KT_WIN_PANE $KBD_WIN_RENAME $CMD_WIN_RENAME
 
 bind-key -T $KT_WIN_PANE $KBD_WIN_SPLIT switch-client -T $KT_WIN_SPLIT
 bind-key -T $KT_WIN_PANE $KBD_WIN_MOVE switch-client -T $KT_WIN_MOVE
@@ -258,37 +264,38 @@ EOF
 # window-split.
 cat << EOF >> "$KBD_FILE"
 
-bind-key -T $KT_WIN_SPLIT $KBD_WIN_SPLIT_RIGHT split-window -h
-bind-key -T $KT_WIN_SPLIT $KBD_WIN_SPLIT_DOWN split-window
+bind-key -T $KT_WIN_SPLIT $KBD_WIN_SPLIT_RIGHT $CMD_WIN_SPLIT_RIGHT
+bind-key -T $KT_WIN_SPLIT $KBD_WIN_SPLIT_DOWN $CMD_WIN_SPLIT_DOWN
 EOF
 
 # window-move.
 cat << EOF >> "$KBD_FILE"
 
-bind-key -T $KT_WIN_MOVE $KBD_WIN_MOVE_UP swap-pane -U
-bind-key -T $KT_WIN_MOVE $KBD_WIN_MOVE_DOWN swap-pane -D
+bind-key -T $KT_WIN_MOVE $KBD_WIN_MOVE_UP $CMD_WIN_MOVE_UP
+bind-key -T $KT_WIN_MOVE $KBD_WIN_MOVE_DOWN $CMD_WIN_MOVE_DOWN
 EOF
 
 # window-arrange.
 cat << EOF >> "$KBD_FILE"
 
-bind-key -T $KT_WIN_ARRANGE $KBD_WIN_ARRANGE_1 select-layout even-horizontal
-bind-key -T $KT_WIN_ARRANGE $KBD_WIN_ARRANGE_2 select-layout even-vertical
-bind-key -T $KT_WIN_ARRANGE $KBD_WIN_ARRANGE_3 select-layout main-horizontal
-bind-key -T $KT_WIN_ARRANGE $KBD_WIN_ARRANGE_4 select-layout main-vertical
+bind-key -T $KT_WIN_ARRANGE $KBD_WIN_ARRANGE_1 $CMD_WIN_ARRANGE_1
+bind-key -T $KT_WIN_ARRANGE $KBD_WIN_ARRANGE_2 $CMD_WIN_ARRANGE_2
+bind-key -T $KT_WIN_ARRANGE $KBD_WIN_ARRANGE_3 $CMD_WIN_ARRANGE_3
+bind-key -T $KT_WIN_ARRANGE $KBD_WIN_ARRANGE_4 $CMD_WIN_ARRANGE_4
 EOF
 
 # window-resize.
 cat << EOF >> "$KBD_FILE"
 
-bind-key -T $KT_WIN_RESIZE $KBD_WIN_RESIZE_LEFT resize-pane -L
-bind-key -T $KT_WIN_RESIZE $KBD_WIN_RESIZE_RIGHT resize-pane -R
-bind-key -T $KT_WIN_RESIZE $KBD_WIN_RESIZE_DOWN resize-pane -D
-bind-key -T $KT_WIN_RESIZE $KBD_WIN_RESIZE_UP resize-pane -U
-bind-key -T $KT_WIN_RESIZE $KBD_WIN_RESIZE_MULTI_LEFT resize-pane -L 5
-bind-key -T $KT_WIN_RESIZE $KBD_WIN_RESIZE_MULTI_RIGHT resize-pane -R 5
-bind-key -T $KT_WIN_RESIZE $KBD_WIN_RESIZE_MULTI_DOWN resize-pane -D 5
-bind-key -T $KT_WIN_RESIZE $KBD_WIN_RESIZE_MULTI_UP resize-pane -U 5
+bind-key -T $KT_WIN_RESIZE $KBD_WIN_RESIZE_LEFT $CMD_WIN_RESIZE_LEFT
+bind-key -T $KT_WIN_RESIZE $KBD_WIN_RESIZE_RIGHT $CMD_WIN_RESIZE_RIGHT
+bind-key -T $KT_WIN_RESIZE $KBD_WIN_RESIZE_DOWN $CMD_WIN_RESIZE_DOWN
+bind-key -T $KT_WIN_RESIZE $KBD_WIN_RESIZE_UP $CMD_WIN_RESIZE_UP
+bind-key -T $KT_WIN_RESIZE $KBD_WIN_RESIZE_MULTI_LEFT $CMD_WIN_RESIZE_MULTI_LEFT
+bind-key -T $KT_WIN_RESIZE $KBD_WIN_RESIZE_MULTI_RIGHT \
+         $CMD_WIN_RESIZE_MULTI_RIGHT
+bind-key -T $KT_WIN_RESIZE $KBD_WIN_RESIZE_MULTI_DOWN $CMD_WIN_RESIZE_MULTI_DOWN
+bind-key -T $KT_WIN_RESIZE $KBD_WIN_RESIZE_MULTI_UP $CMD_WIN_RESIZE_MULTI_UP
 
 bind-key -T $KT_WIN_RESIZE $KBD_QUIT set-option key-table $KT_CMD
 bind-key -T $KT_WIN_RESIZE $KBD_CMD_EXIT set-option key-table root
@@ -300,11 +307,11 @@ cat << EOF >> "$KBD_FILE"
 
 bind-key -T $KT_CMD $KBD_SESS switch-client -T $KT_SESS
 
-bind-key -T $KT_SESS $KBD_SESS_DETACH detach-client
-bind-key -T $KT_SESS $KBD_SESS_PREV switch-client -p
-bind-key -T $KT_SESS $KBD_SESS_NEXT switch-client -n
-bind-key -T $KT_SESS $KBD_SESS_TREE choose-tree -Zs
-bind-key -T $KT_SESS $KBD_SESS_DEL $KILL_SESSION
+bind-key -T $KT_SESS $KBD_SESS_DETACH $CMD_SESS_DETACH
+bind-key -T $KT_SESS $KBD_SESS_PREV $CMD_SESS_PREV
+bind-key -T $KT_SESS $KBD_SESS_NEXT $CMD_SESS_NEXT
+bind-key -T $KT_SESS $KBD_SESS_TREE $CMD_SESS_TREE
+bind-key -T $KT_SESS $KBD_SESS_DEL $CMD_SESS_DEL
 EOF
 
 # goto.
@@ -320,22 +327,21 @@ cat << EOF >> "$KBD_FILE"
 
 bind-key -T $KT_GOTO $KBD_GOTO_WIN switch-client -T $KT_GOTO_WIN
 
-bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_0 select-window -t :0
-bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_1 select-window -t :1
-bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_2 select-window -t :2
-bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_3 select-window -t :3
-bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_4 select-window -t :4
-bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_5 select-window -t :5
-bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_6 select-window -t :6
-bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_7 select-window -t :7
-bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_8 select-window -t :8
-bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_9 select-window -t :9
-bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_TREE choose-tree -Zw
-bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_INDEX \
-    command-prompt -p index "select-window -t ':%%'"
-bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_PREV select-window -t :-
-bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_NEXT select-window -t :+
-bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_LAST last-window
+bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_0 $CMD_GOTO_WIN_0
+bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_1 $CMD_GOTO_WIN_1
+bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_2 $CMD_GOTO_WIN_2
+bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_3 $CMD_GOTO_WIN_3
+bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_4 $CMD_GOTO_WIN_4
+bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_5 $CMD_GOTO_WIN_5
+bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_6 $CMD_GOTO_WIN_6
+bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_7 $CMD_GOTO_WIN_7
+bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_8 $CMD_GOTO_WIN_8
+bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_9 $CMD_GOTO_WIN_9
+bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_TREE $CMD_GOTO_WIN_TREE
+bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_INDEX $CMD_GOTO_WIN_INDEX
+bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_PREV $CMD_GOTO_WIN_PREV
+bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_NEXT $CMD_GOTO_WIN_NEXT
+bind-key -T $KT_GOTO_WIN $KBD_GOTO_WIN_LAST $CMD_GOTO_WIN_LAST
 EOF
 
 # goto-session.
@@ -344,9 +350,9 @@ cat << EOF >> "$KBD_FILE"
 
 bind-key -T $KT_GOTO $KBD_GOTO_SESS switch-client -T $KT_GOTO_SESS
 
-bind-key -T $KT_GOTO_SESS $KBD_GOTO_SESS_PREV switch-client -p
-bind-key -T $KT_GOTO_SESS $KBD_GOTO_SESS_NEXT switch-client -n
-bind-key -T $KT_GOTO_SESS $KBD_GOTO_SESS_TREE choose-tree -Zs
+bind-key -T $KT_GOTO_SESS $KBD_GOTO_SESS_PREV $CMD_GOTO_SESS_PREV
+bind-key -T $KT_GOTO_SESS $KBD_GOTO_SESS_NEXT $CMD_GOTO_SESS_NEXT
+bind-key -T $KT_GOTO_SESS $KBD_GOTO_SESS_TREE $CMD_GOTO_SESS_TREE
 EOF
 
 # Load the keybindings.

@@ -92,7 +92,10 @@ in order to get bug fixes, new features etc.
 
 ## Keybindings
 
-The following are the default keybindings of tmux-modal.
+The following are the default keybindings of tmux-modal. (Note that these are
+customizable, as well as the command executed for each! See option
+[`@modal-keybindings-conf`](#custom-keybindings) and
+[`@modal-commands-conf`](#custom-commands), respectively.)
 
 ### Main
 
@@ -223,6 +226,17 @@ in your `.tmux.conf` to load them:
 
 ```
 set -g @modal-keybindings-conf /path/to/my-tmux-modal-keybindings.conf
+```
+
+### Custom commands
+
+The option `@modal-commands-conf` can be set to load custom commands that will
+be executed for the keybindings. The file `commands.conf` shows the default
+commands and can be used as a template. Thus, copy the file and modify it to
+your liking, and finally set this in your `.tmux.conf` to load them:
+
+```
+set -g @modal-commands-conf /path/to/my-tmux-modal-commands.conf
 ```
 
 ### Yes/no prompt
