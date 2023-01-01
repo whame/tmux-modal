@@ -4,13 +4,7 @@ CONF_FILE := keybindings.conf
 SCRIPT := tmux-modal.tmux
 
 .PHONY: all
-all: $(CONF_FILE)
-
-$(CONF_FILE): $(SCRIPT)
-	@lineNr=$$(wc -l $< | cut -d ' ' -f 1); \
-		grep "^# START KEYBINDINGS" -A $${lineNr} $< | tail -n +2 | \
-		grep "^# END KEYBINDINGS" -B $${lineNr} | head -n -1 > $@
-	@echo "Created ${CONF_FILE}"
+all:
 
 .PHONY: test
 test: all
@@ -18,4 +12,3 @@ test: all
 
 .PHONY: clean
 clean:
-	$(RM) $(CONF_FILE)
