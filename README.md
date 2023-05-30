@@ -177,13 +177,15 @@ usual, `q` exits the sticky command).
 
 ### Session
 
-| Keybinding | Description                                                  | tmux Command       |
-|------------|--------------------------------------------------------------|--------------------|
-| `s d`      | Detach session.                                              | `detach-client`    |
-| `s h`      | Select previous session. This is an alias for `g s h`.       | `switch-client -p` |
-| `s l`      | Select next session. This is an alias for `g s l`.           | `switch-client -n` |
-| `s t`      | Select session with tree view. This is an alias for `g s t`. | `choose-tree -Zs`  |
-| `s D`      | Delete session.                                              | `kill-session`     |
+| Keybinding | Description                                                  | tmux Command                                   |
+|------------|--------------------------------------------------------------|------------------------------------------------|
+| `s d`      | Detach session.                                              | `detach-client`                                |
+| `s h`      | Select previous session. This is an alias for `g s h`.       | `switch-client -p`                             |
+| `s l`      | Select next session. This is an alias for `g s l`.           | `switch-client -n`                             |
+| `s t`      | Select session with tree view. This is an alias for `g s t`. | `choose-tree -Zs`                              |
+| `s D`      | Delete session.                                              | `kill-session`                                 |
+| `s ,`      | Rename session.                                              | `command-prompt -I "#S" "rename-session '%%'"` |
+
 
 ### Go to
 
