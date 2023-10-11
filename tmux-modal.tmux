@@ -108,6 +108,11 @@ fi
 # Check usage of y/n-commands.
 YESNO_OPT=@modal-yesno-cmd
 YESNO_OPT_VAL=$(tmux show-options -g -v -q $YESNO_OPT)
+if [ -n "$YESNO_OPT_VAL" ]; then
+    echo "WARNING: Option $YESNO_OPT has been deprecated." \
+         "Please use option $CMD_CONF_OPT instead"
+fi
+
 if [ -z "$YESNO_OPT_VAL" ]; then
     YESNO_OPT_VAL=off
 elif ! parse_yn_opt "$YESNO_OPT_VAL" $YESNO_OPT ; then
