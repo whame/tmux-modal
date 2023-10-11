@@ -72,35 +72,38 @@ unbind "^bind-key +-T +root +.+ +set-option key-table $KT_CMD"
 
 # Parse options.
 
-# Source custom (overriding) keybinding file.
+# Source default and custom (overriding) keybinding file.
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-KBD_CONF_OPT=@modal-keybindings-conf
-KBD_CONF_FILE=$(tmux show-options -g -v -q $KBD_CONF_OPT)
-if [ -z "$KBD_CONF_FILE" ]; then
-    KBD_CONF_FILE="$CURRENT_DIR/keybindings.conf"
-fi
-
-if [ ! -f "$KBD_CONF_FILE" ]; then
-    echo Option $KBD_CONF_OPT: File \""$KBD_CONF_FILE"\" not found
-    exit 2
-fi
+KBD_CONF_FILE="$CURRENT_DIR/keybindings.conf"
 
 source "$KBD_CONF_FILE"
 
-# Source custom (overriding) command file.
-CMD_CONF_OPT=@modal-commands-conf
-CMD_CONF_FILE=$(tmux show-options -g -v -q $CMD_CONF_OPT)
-if [ -z "$CMD_CONF_FILE" ]; then
-    CMD_CONF_FILE="$CURRENT_DIR/commands.conf"
+KBD_CONF_OPT=@modal-keybindings-conf
+KBD_CONF_VAL=$(tmux show-options -g -v -q $KBD_CONF_OPT)
+if [ -n "$KBD_CONF_VAL" ]; then
+    if [ ! -f "$KBD_CONF_VAL" ]; then
+        echo Option $KBD_CONF_OPT: File \""$KBD_CONF_VAL"\" not found
+        exit 2
+    fi
+
+    source "$KBD_CONF_VAL"
 fi
 
-if [ ! -f "$CMD_CONF_FILE" ]; then
-    echo Option $CMD_CONF_OPT: File \""$CMD_CONF_FILE"\" not found
-    exit 2
-fi
+# Source default and custom (overriding) command file.
+CMD_CONF_FILE="$CURRENT_DIR/commands.conf"
 
 source "$CMD_CONF_FILE"
+
+CMD_CONF_OPT=@modal-commands-conf
+CMD_CONF_VAL=$(tmux show-options -g -v -q $CMD_CONF_OPT)
+if [ -n "$CMD_CONF_VAL" ]; then
+    if [ ! -f "$CMD_CONF_VAL" ]; then
+        echo Option $CMD_CONF_OPT: File \""$CMD_CONF_VAL"\" not found
+        exit 2
+    fi
+
+    source "$CMD_CONF_VAL"
+fi
 
 # Check usage of y/n-commands.
 YESNO_OPT=@modal-yesno-cmd
