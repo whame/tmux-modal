@@ -282,6 +282,17 @@ use. For example, if you press `w` the status bar will change from the modal
 command icon `[=]` to `[w]` (the window command). If you now further press `s`,
 it will update to `[ws]` to signify the split window command sequence and so on.
 
+### Set custom status bar modal mode icon
+
+The option `@modal-cmd-icon` can be used to specify any string, which will be
+the left status bar icon to indicate that modal mode is in use. For example, to
+use a circle as icon (note the padding at the beginning for a more aesthetically
+centering in the status bar):
+
+```
+set -g @modal-cmd-icon " 🟢"
+```
+
 ### Yes/no prompt
 
 **DEPRECATED**

@@ -152,6 +152,13 @@ elif ! parse_yn_opt "$SHOW_CMD_KEYS_VAL" $SHOW_CMD_KEYS_OPT; then
     exit 22
 fi
 
+# Modal mode status bar icon.
+KT_CMD_ICON_OPT=@modal-cmd-icon
+KT_CMD_ICON_VAL=$(tmux show-options -g -v -q $KT_CMD_ICON_OPT)
+if [ -z "$KT_CMD_ICON_VAL" ]; then
+    KT_CMD_ICON_VAL="[=]"
+fi
+
 # Create keybinding file to be sourced by tmux.
 
 KBD_FILE="$CURRENT_DIR/.kbd.conf"
@@ -374,7 +381,7 @@ fi
 
 # Prepend left status bar with KT_CMD_ICON if our key tables are in use.
 # Determine this by checking if current key table starts with our prefix.
-KT_CMD_ICON="[=]"
+KT_CMD_ICON=$KT_CMD_ICON_VAL
 STATUS_LEFT=`
 `'#{'`
   `'?#{==:'$KT_PREFIX'-,'`
